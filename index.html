@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+	<meta charset="UTF-8">
+	<title>Курсач</title>
+	<link href="./css/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="./css/normalize.min.css">
+	<link rel="stylesheet" href="./css/responsive.css">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<!-- Главная	-->
+	<body ng-app="blogApp">
+	<div ng-controller="BlogController as blog">
+    <!-- Шапка -->
+    <div class="topbar">
+      <div class="container">
+        <div class="row">
+          <div class="col-s-4">
+            <h1 ng-click="blog.selectTab('blog')" class="push-left">{{blog.title}}</h1>
+          </div>
+          <div class="offset-s-4 col-s-4">
+            <nav role='navigation' class="push-right">
+              <ul>
+                <li><a href="#" ng-click="blog.selectTab('blog')">Главная</a></li> //
+                <li><a href="#" ng-click="blog.selectTab('new')">Добавить пост</a></li>
+              </ul>
+            </nav> 
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Контент -->
+    <div class="content">
+      <div class="container">
+        <div class="row">
+          <ul class="post-grid" ng-show="blog.isSelected('blog')">
+            <li ng-repeat="post in blog.posts track by $index" 
+                class="col-s-4" 
+                ng-class="{ 'reset-s' : $index%3==0 }" 
+                ng-click="blog.selectTab($index)" >
+              <h3>{{post.title}}</h3>
+              <p>{{post.body[0] | limitTo:70}}...</p>
+              <p class="fa fa-comment push-left"> {{post.comments.length}}
+              </p>
+              <p class="fa fa-heart push-right"> {{post.likes}}
+              </p>
+            </li>
+          </ul>
+          
+          <!-- Собственно пост полностью -->
+          <div class="post" ng-repeat="post in blog.posts" ng-show="blog.isSelected($index)">
+          <div>
+          <h2>{{post.title}}</h2> 
+          <div class="text-center"><img ng-src="{{post.image}}"	/></div>
+          <div class="row">
+          <div class="col-s-6"><cite>Автор: {{post.author}}</cite></div>
+          <div class="col-s-6"><cite>Создано {{post.createdOn | date : 'dd.MM.yyyy HH:mm'}}</cite></div>
+          </div>
+          <div class="post-body">
+           <p ng-repeat="paragraph in post.body">
+             {{paragraph}}
+           </p> 
+          </div>
+          <!-- Комменты, лайки и панель управления поста -->
+          <div class="comments" ng-controller="CommentController as commentCtrl">
+            <button class="fa fa-heart" ng-click="blog.Like()"> {{post.likes}}</button>
+            <button	 ng-click="blog.deletePost()">Удалить </button>
+
+            <!-- Список комментов -->
+            <h3>Комментарии</h3> 
+            <ul>
+             <li ng-repeat="comment in post.comments">
+               "{{comment.body}}"
+               <cite>- <b>{{comment.author}}</b></cite>
+             </li>
+            </ul>
+            
+            <!-- Форма добавления комментария -->
+            <form name="commentForm" ng-submit="commentForm.$valid && commentCtrl.addComment(blog)" novalidate>
+              <h4>Комментировать</h4> 
+                <textarea ng-model="commentCtrl.comment.body" cols="30" rows="10" required></textarea>
+                <label for="">Ник</label>
+                <input type="text" ng-model="commentCtrl.comment.author" required placeholder="Name"/>
+                <input type="submit" value="Submit" />
+            </form>
+          </div>
+          </div>
+          </div>
+  
+          <!-- Добавление нового поста -->
+          <div class="post" ng-show="blog.isSelected('new')"> 
+          <h2>Добавление поста</h2>
+          <form name="postForm" ng-submit=" blog.addPost()" novalidate>
+            <h4>Заголовок</h4>
+            <input type="text" ng-model="blog.post.title"/>
+            <h4>Текст</h4>
+            <textarea ng-model="blog.post.body" ng-list="/\n/" rows="10"></textarea>
+            <label for="">Картинка</label>
+            <input type="file" id="file_pic"  />
+            <label for="">Автор</label>
+            <input type="text" ng-model="blog.post.author" placeholder="Вася" required/>
+            <input type="submit" value="Сохранить" />
+          </form>
+          </div>
+        
+        </div><!-- .row -->
+      </div><!-- .container -->
+    </div><!-- .content -->
+	</div><!-- ng-controller -->
+	
+	
+</body>
+<script src='./js/angular.min.js'></script>
+<script src='./js/angular-animate.js'></script>
+<script src='./js/jquery-2.1.0.min.js'></script>
+<script src='./js/responsive.js'></script>
+<script src="./js/Dropbox-sdk.min.js"></script>
+<script src="./js/dropbox_token.js"></script>
+<script	 src="./js/index.js"></script>
+</body>
+</html>
